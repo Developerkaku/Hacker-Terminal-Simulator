@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hacker Terminal</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Ubuntu+Sans+Mono:ital,wght@0,400..700;1,400..700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            border: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: black;
+            color: limegreen;
+            /* font-family: 'Courier New', Courier, monospace; */
+            font-family: "ubuntu sans mono";
+        }
+
+        pre {
+            min-width: 1px;
+            margin-left: 1%;
+            /* margin-top: 10%; */
+
+            width: fit-content;
+            height: 15px;
+        }
+
+        .active {
+            border-right-style: solid;
+            border-right-width: 5px;
+            border-right-color: red;
+            animation: blink .5s infinite;
+        }
+
+        @keyframes blink {
+            from {
+                border-right-color: transparent;
+            }
+
+            to {
+                border-right-color: red;
+            }
+        }
+
+        @keyframes errShake {
+            0% {
+                transform: translateX(0%);
+            }
+
+            33% {
+                transform: translateX(10px);
+            }
+
+            66% {
+                transform: translateX(-10px);
+            }
+
+            100% {
+                transform: translateX(0px);
+            }
+        }
+
+        span {
+            display: inline-block;
+            width: 9.6px;
+            /* height: 15px; */
+            /* height: auto; */
+        }
+        
+        .errContainer {
+            width: fit-content;
+            height: 15px;
+            margin-left: 1%;
+            /* background-color: green; */
+        }
+        
+        span.falling {
+            overflow: auto;
+            animation: fall 4s linear forwards;
+        }
+
+        @keyframes fall {
+            from {
+                transform: translateY(0);
+            }
+
+            to {
+                transform: translateY(100vh);
+            }
+        }
+        
+    </style>
+</head>
+
+<body>
+<div id="errGap" class="gap"></div>
+    <pre class="active"></pre>
+
+    <script>
+        var elems;
+
+        alert( "For now statement 'reload' reloads the page \n An error statement falls apart\n New functions will be updated");
+        function valid(key) {
+            let validTxt = [
+                '1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
+                'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', 'a', 's', 'd',
+                'f', 'g', 'h', 'j', 'k', 'l', 'z', 'x', 'c', 'v', 'b', 'n', 'm',
+                'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', 'A', 'S', 'D',
+                'F', 'G', 'H', 'J', 'K', 'L', 'Z', 'X', 'C', 'V', 'B', 'N', 'M',
+                ' ', '!', '$', '%', '^', '@', '#', '*', '&', '(', ')', '-', '_',
+                '[', ']', '{', '}', '+', '=', '\\', '|', ':', ';', '\'', '\"',
+                ',', '<', '.', '>', '/', '?'
+            ];
+
+            for (let i = 0; i < validTxt.length; i++) {
+                if (validTxt[i] === key) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        function validExtra(key) {
+            switch (key) {
+                case "Enter": {
+
+                    let pre = document.createElement("pre");
+                    pre.innerHTML = "";
+                    document.body.appendChild(pre);
+
+                    elems = document.getElementsByTagName("pre");
+                    let activePre = elems[elems.length - 1];
+                    activePre.className = "active";
+
+                    for (let i = 0; i < elems.length - 1; i++) {
+                        elems[i].className = "notActive";
+                    }
+                    //ANIMATING THE ERROR LINE !!!
+
+                    if (predefined(elems[elems.length - 2].innerHTML)) { }
+                    else {
+                        let errPre = elems[elems.length - 2];
+                        errPre.style.animation = "errShake .2s linear";
+                        //fall(errPre)
+                        let maxDelay = 0;
+
+                        setTimeout(() => {
+                            // let errGap = document.getElementById("errGap");
+                            let container = document.createElement("span");
+                            container.className = "errContainer";
+                            // errGap.appendChild(container)
+                            // errGap.insertAdjacentElement("afterend", container)
+                            document.body.insertBefore(container, errPre);
+
+                            for (let i = 0; i < errPre.innerHTML.length; i++) {
+
+                                let span = document.createElement("span");
+                                let delay = Math.random() * 1;
+                                span.className = "falling";
+                                span.innerHTML = errPre.innerHTML[i];
+                                span.style.animationDelay = delay + "s";
+maxDelay = (maxDelay < delay) ? delay : maxDelay;
+                                container.appendChild(span);
+                                // document.body.insertBefore(span, errPre);
+                            }
+                            errPre.innerHTML = "";
+                            errPre.style.width = "0px";
+                            errPre.style.height = "0px";
+                            // document.body.removeChild(errPre);
+
+                            setTimeout(() => {
+                                let errors = document.getElementsByClassName("errcontainer");
+                                // let errors = document.getElementsByTagName("div");
+                                // document.body.removeChild(errors[0]);
+                            }, 4000 + (maxDelay * 1000));
+                        }, 200);
+
+                    }
+                }
+                case "Backspace": {
+                    let elem = document.getElementsByClassName("active");
+                    elem[0].innerHTML = elem[0].innerHTML.slice(0, elem[0].innerHTML.length - 1);
+                    break;
+                }
+                case "Tab": {
+                    let elem = document.getElementsByClassName("active");
+                    elem[0].innerHTML += "    ";
+                    break;
+                }
+            }
+        }
+
+        function predefined(string) {
+            if (string === "reload") {
+                location.reload();
+
+                return true;
+            }
+
+            return false;
+        }
+
+        window.addEventListener("keydown", (e) => {
+
+            elems = document.getElementsByTagName("pre");
+
+            if (validExtra(e.key)) {
+                // extra characters !!!
+            } else if (valid(e.key)) {
+
+                elems[elems.length - 1].innerHTML += e.key;
+
+            }
+        })
+
+    </script>
+</body>
+
+</html>
